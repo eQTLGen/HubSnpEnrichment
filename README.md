@@ -34,19 +34,29 @@ Or just download this from the github download link and unzip.
 #### Input
 
 `--eqtls`                       Folder of genome-wide eQTL meta-analysis parquet files. Output of `MetaAnalysis` pipeline.
+
 `--allele_info`                 Parquet file with variant allele info for eQTLGen dataset.
+
 `--gmt`                         Folder with gene GMT (gene matrix transposed) format gene libraries for which to test the enrichment for. Can contain one or multiple GMT files.
+
 `--nih_symbols`                 File with gene symbol aliases and corresponding ENSEMBL gene IDs.
 
 #### Settings
 
 `--outdir`                    Output directory. Defaults to "results".
+
 `--Pthresh`                   P-value threshold for eQTL SNP significance. Defaults to 5e-8.
+
 `--I2thresh `                 Heterogeneity I2 threshold for eQTL inclusion. Defaults to 40.
+
 `--GeneCountThresh `          Number of eGenes to consider variant be "hub". Defaults to 10.
+
 `--GeneOverlapThresh  `       Overlap threshold for pruning hub variants based on eGene overlap. Defaults to 0.8.
+
 `--PruneWindow`               Genomic window used for pruning hub variants based on eGene overlap. Defaults to 1000000.
+
 `--GseaBatchSize`             Argument specifing how many hub SNPs to run through GSEA in a loop. Larger number parallelizes less but increases  Defaults to 5.
+
 `--SnpFilter`                 SNP filtering file, useful for confining the analysis for preselected set of variants. 
 
 #### Command
