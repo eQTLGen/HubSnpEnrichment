@@ -109,22 +109,22 @@ NXF_VER=23.04.3 ${nextflow_path}/nextflow run HubSnpEnrichmentPipeline.nf \
 
 The pipeline writes out the file `GSEA_results.txt` that contains following columns:
 
-- Hub_SNP           Name of the hub variant.
-- pathway           The pathway/gene set that was tested.
-- pval              P-value from GSEA.
-- padj              P-value adjusted for multiple testing by Benjamini-Hochberg FDR. NB! Currently it is adjusted per each library file. If you include multiple GMT files into the analysis you might need to recalculate it.
-- log2err           The expected error for the standard deviation of the P-value logarithm, as per fgwas documentation.
-- ES                Enrichment score from GSEA.
-- NES               Enrichment score normalised to mean enrichment of random samples of the same size, as per fgwas documentation.
-- size              Size of the pathway after removing gene not present in eQTL dataset.
-- GSEA_type         How was eGene ordering done (Z or abs(Z)).
-- nr_tested_genes   How many genes were present in eQTL dataset. 
-- nr_pos_dir        How many genes showed increased eQTL effect for eQTL effect allele. 
-- nr_neg_dir        How many genes showed decreased eQTL effect for eQTL effect allele. 
-- nr_pos_dir_sig_Z  How many genes showed increased eQTL effect for eQTL effect allele AND absolute Z>5.451. 
-- nr_neg_dir_sig_Z  How many genes showed decreased eQTL effect for eQTL effect allele AND absolute Z>5.451.
+- `Hub_SNP`           Name of the hub variant.
+- `pathway`           The pathway/gene set that was tested.
+- `pval`              P-value from GSEA.
+- `padj`              P-value adjusted for multiple testing by Benjamini-Hochberg FDR. NB! Currently it is adjusted per each library file. If you include multiple GMT files into the analysis you might need to recalculate it.
+- `log2err`           The expected error for the standard deviation of the P-value logarithm, as per fgwas documentation.
+- `ES`                Enrichment score from GSEA.
+- `NES`               Enrichment score normalised to mean enrichment of random samples of the same size, as per fgwas documentation.
+- `size`              Size of the pathway after removing gene not present in eQTL dataset.
+- `GSEA_type`         How was eGene ordering done (Z or abs(Z)).
+- `nr_tested_genes`   How many genes were present in eQTL dataset. 
+- `nr_pos_dir`        How many genes showed increased eQTL effect for eQTL effect allele. 
+- `nr_neg_dir`        How many genes showed decreased eQTL effect for eQTL effect allele. 
+- `nr_pos_dir_sig_Z`  How many genes showed increased eQTL effect for eQTL effect allele AND absolute Z>5.451. 
+- `nr_neg_dir_sig_Z`  How many genes showed decreased eQTL effect for eQTL effect allele AND absolute Z>5.451.
 
-**Note:** One of the enrichment analyses could be to test enrichment for transcription factor targets. For such analysis it is informative to test if corresponding transcription factor is also encoded near the corresponding hub SNP, pointing to potential mechanism causing eQTL effect(s). To do so, there is helper script that can be run by `run_annotate_script.sh`. This script writes out `GSEA_results_TF_enrichment_annotated.txt.gz` that contains additional columns with TF information and column `TF_close` indicating whether TF whose targets are enriched among hub SNP eQTL genes is encoded near the corresponding hub SNP (no/yes). The window between hub variant and TF defaults to 1Mb but can be specified in the settings.
+**Note:** One of the enrichment analyses could be to test enrichment for transcription factor targets. For such analysis it is informative to test if corresponding transcription factor is also encoded near the corresponding hub SNP, pointing to potential mechanism causing eQTL effect(s). To do so, there is helper script that can be run by `run_annotate_script.sh`. This script writes out `GSEA_results_TF_enrichment_annotated.txt.gz` that contains additional columns with TF information and column `TF_close` indicating whether TF whose targets are enriched among hub SNP eQTL genes is encoded near the corresponding hub SNP (no/yes). The window between hub variant and TF defaults to 1Mb but can be specified in the settings. Script assumes that gene set names in the library start with TF name in HGNC gene symbol format (e.g "TP53 ENCODE").
 
 ## Acknowledgements
 
