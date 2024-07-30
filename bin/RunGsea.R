@@ -122,13 +122,13 @@ res$GSEA_type <- "abs(Z)"
 res$nr_tested_genes <- length(genelist)
 res$nr_pos_dir <- length(genelist[genelist > 0])
 res$nr_neg_dir <- length(genelist[genelist < 0])
-res$nr_pos_dir_Z <- length(genelist[genelist > 0 & abs(genelist) > 5.45131])
-res$nr_neg_dir_Z <- length(genelist[genelist < 0 & abs(genelist) > 5.45131])
+res$nr_pos_dir_sig_Z <- length(genelist[genelist > 0 & abs(genelist) > 5.45131])
+res$nr_neg_dir_sig_Z <- length(genelist[genelist < 0 & abs(genelist) > 5.45131])
 res$Hub_SNP <- snp
-# TODO: add possibility to select Z threshold
+# TODO: add possibility to select significant Z threshold
 
 res <- res[, c(ncol(res), 1:(ncol(res) - 1)), with = FALSE]
 
 res_combined <- rbind(res_combined, res)
-fwrite(res_combined, paste(first_snp, "results.txt", sep = "_"), sep = "\t", quote = FALSE, append = TRUE)
+fwrite(res_combined[, -9, with = FALSE], paste(first_snp, "results.txt", sep = "_"), sep = "\t", quote = FALSE, append = TRUE)
 }

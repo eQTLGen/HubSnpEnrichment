@@ -6,3 +6,4 @@ test_data
 results
 script_test*
 .DS_Store
+run_annotate_script_test.sh

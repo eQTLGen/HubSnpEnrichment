@@ -18,6 +18,7 @@ nextflow run HubSnpEnrichmentPipeline.nf \
 --eqtls \
 --allele_info \
 --gmt \
+--nih_symbols \
 --outdir
 
 Mandatory arguments:
@@ -34,7 +35,7 @@ Optional arguments:
 --GeneOverlapThresh         Overlap threshold for pruning hub variants based on eGene overlap. Defaults to 0.8.
 --PruneWindow               Genomic window used for pruning hub variants based on eGene overlap. Defaults to 1000000.
 --GseaBatchSize             Argument specifing how many hub SNPs to run through GSEA in a loop. Larger number parallelizes less but increases  Defaults to 5.
-
+--SnpFilter
 """.stripIndent()
 
 }
@@ -90,6 +91,7 @@ summary['Gene count threshold']                     = params.GeneCountThresh
 summary['Gene overlap threshold']                   = params.GeneOverlapThresh
 summary['Gene prune window']                        = params.PruneWindow
 summary['Batch size']                               = params.GseaBatchSize
+summary['SNP filter']                               = params.SnpFilter
 
 // import modules
 include { FILTER; FINDHUB; EXTRACTHUB; GSEA; SPLIT; READSETS; FilterDataBySignificance; IdentifyHubVariants; ExtractHubVariants; SplitHubs; RunGsea; PrepareGeneSets } from './modules/Enrichment.nf'
@@ -103,18 +105,29 @@ eqtls = Channel.fromPath(params.eqtls + '/phenotype=*', type: 'dir').buffer(size
 
 workflow {
 
-        FILTER(eqtls, p_thresh, i2_thresh)
-        findhub_ch = FILTER.out.flatten().collectFile(name: 'SigEffects.txt', keepHeader: true, sort: true, storeDir: "${params.outdir}")
-        .combine(allele_ch)
-        .combine(gene_count_thresh)
-        .combine(gene_overlap_thresh)
-        .combine(prune_window)
-        FINDHUB(findhub_ch)
-        EXTRACTHUB(eqtls.combine(FINDHUB.out))
-        SPLIT(EXTRACTHUB.out.flatten().collectFile(name: 'HubVariants.txt', keepHeader: true, sort: true))
-        READSETS(gmt_ch.combine(nih_ch))
-        GSEA(READSETS.out.combine(SPLIT.out.flatten().buffer(size: params.GseaBatchSize, remainder: true)))
-        GSEA.out.flatten().collectFile(name: 'GSEA_results.txt', keepHeader: true, sort: true, storeDir: "${params.outdir}")
+  SnpFilterChannel = params.SnpFilter
+    ? Channel.fromPath(params.SnpFilter, checkIfExists:true)
+    : Channel.empty()
+
+    if (params.SnpFilter == null){
+    FILTER(eqtls, p_thresh, i2_thresh)
+    findhub_ch = FILTER.out.flatten().collectFile(name: 'SigEffects.txt', keepHeader: true, sort: true, storeDir: "${params.outdir}")
+    .combine(allele_ch)
+    .combine(gene_count_thresh)
+    .combine(gene_overlap_thresh)
+    .combine(prune_window)
+
+    FINDHUB(findhub_ch)
+    }
+    if (params.SnpFilter == null){
+    EXTRACTHUB(eqtls.combine(FINDHUB.out))
+    } else {
+    EXTRACTHUB(eqtls.combine(SnpFilterChannel))
+    }
+    SPLIT(EXTRACTHUB.out.flatten().collectFile(name: 'HubVariants.txt', keepHeader: true, sort: true))
+    READSETS(gmt_ch.combine(nih_ch))
+    GSEA(READSETS.out.combine(SPLIT.out.flatten().buffer(size: params.GseaBatchSize, remainder: true)))
+    GSEA.out.flatten().collectFile(name: 'GSEA_results.txt', keepHeader: true, sort: true, storeDir: "${params.outdir}")
 }
 workflow.onComplete {
     println ( workflow.success ? "Pipeline finished!" : "Something crashed...debug!" )

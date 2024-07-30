@@ -62,9 +62,11 @@ process EXTRACTHUB {
         mkdir tmp_eqtls
         cp -r phenotype=* tmp_eqtls/
 
+        mv *.txt hub_snps2.txt
+
         ExtractHubVariants.R \
         --eqtl_folder tmp_eqtls \
-        --hub_snps hub_snps.txt
+        --hub_snps hub_snps2.txt
 
         rm -r tmp_eqtls
         """
