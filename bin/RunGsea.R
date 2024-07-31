@@ -30,11 +30,8 @@ GSEA_type = NA,
 nr_tested_genes = NA,
 nr_pos_dir = NA,
 nr_neg_dir = NA,
-nr_pos_dir_Z = NA, 
-nr_neg_dir_Z = NA)[-1]
-
-fwrite(res_combined, "results.txt", sep = "\t", quote = FALSE)
-
+nr_pos_dir_sig_Z = NA, 
+nr_neg_dir_sig_Z = NA)[-1]
 
 # Read in prepared gene sets
 gmt <- readRDS(args$gmt)
@@ -53,7 +50,7 @@ snp <- sub("\\.rds$", "", basename(inp_lists[i]))
 genelist <- readRDS(inp_lists[i])
 
 # Run GSEA
-message(paste("Running GSEA:", snp))
+message(paste0("Running GSEA: ", snp, "..."))
 
 # Effect size and direction
 res <- fgsea(pathways = gmt,
@@ -75,8 +72,8 @@ leadingEdge = NA,
 nr_tested_genes = NA,
 nr_pos_dir = NA,
 nr_neg_dir = NA,
-nr_pos_dir_Z = NA, 
-nr_neg_dir_Z = NA,
+nr_pos_dir_sig_Z = NA, 
+nr_neg_dir_sig_Z = NA,
 Hub_SNP = NA)}
 
 # Add info about direction
@@ -84,8 +81,8 @@ res$GSEA_type <- "Z"
 res$nr_tested_genes <- length(genelist)
 res$nr_pos_dir <- length(genelist[genelist > 0])
 res$nr_neg_dir <- length(genelist[genelist < 0])
-res$nr_pos_dir_Z <- length(genelist[genelist > 0 & abs(genelist) > 5.45131])
-res$nr_neg_dir_Z <- length(genelist[genelist < 0 & abs(genelist) > 5.45131])
+res$nr_pos_dir_sig_Z <- length(genelist[genelist > 0 & abs(genelist) > 5.45131])
+res$nr_neg_dir_sig_Z <- length(genelist[genelist < 0 & abs(genelist) > 5.45131])
 res$Hub_SNP <- snp
 # TODO: add possibility to select Z threshold
 
@@ -113,8 +110,8 @@ leadingEdge = NA,
 nr_tested_genes = NA,
 nr_pos_dir = NA,
 nr_neg_dir = NA,
-nr_pos_dir_Z = NA, 
-nr_neg_dir_Z = NA,
+nr_pos_dir_sig_Z = NA, 
+nr_neg_dir_sig_Z = NA,
 Hub_SNP = NA)}
 
 # Add info about direction
@@ -130,5 +127,6 @@ res$Hub_SNP <- snp
 res <- res[, c(ncol(res), 1:(ncol(res) - 1)), with = FALSE]
 
 res_combined <- rbind(res_combined, res)
-fwrite(res_combined[, -9, with = FALSE], paste(first_snp, "results.txt", sep = "_"), sep = "\t", quote = FALSE, append = TRUE)
+message(paste0("Running GSEA: ", snp, "...done"))
 }
+fwrite(res_combined[, -9, with = FALSE], paste(first_snp, "results.txt", sep = "_"), sep = "\t", quote = FALSE, append = TRUE)

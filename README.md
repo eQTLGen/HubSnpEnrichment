@@ -11,7 +11,7 @@ The overall analysis scheme is the following:
 3. In order to avoid testing many variant proxies, "hub" variants are "pruned" based on affected genes. Starting with the variant with the largest number of affected genes, other variants are removed in the near vicinity (+/-1Mb), if they affect very similar set of genes (by default 80% of genes shared with the "hub" variant). This process is iterated until all very similarly behaving variants are removed from the analysis.
 4. All eQTL association summary statistics for each hub variant are extracted from the genome-wide eQTL results.
 5. Genes are ordered by eQTL effect strength and direction (eQTL Z-score). Because it might be informative to also consider direction of eQTL effect, ordering is done two ways: using eQTL Z-score (accounting for eQTL effect direction, i.e. whether hub SNP 'activates' or 'represses' certain gene set or pathway in an uniform way) and using absolute eQTL Z-score (do not consider eQTL effect direction, just whether eQTL genes are part of gene set of pathway).
-6. GSEA is run for each "hub" SNP and against all the gene libaries that are input. Multiple testing is currently done per library.
+6. GSEA is run for each "hub" SNP and against all the gene libaries that are input.
    
 ## Usage information 
 
@@ -57,7 +57,7 @@ Or just download this from the github download link and unzip.
 
 `--GseaBatchSize`             Argument specifing how many hub SNPs to run through GSEA in a loop. Larger number parallelizes less but increases  Defaults to 5.
 
-`--SnpFilter`                 SNP filtering file, useful for confining the analysis for preselected set of variants. 
+`--SnpFilter`                 SNP filtering file, useful for confining the analysis for preselected set of variants. This filter overwrites the P-value and I2 filters.
 
 #### Command
 
@@ -112,13 +112,13 @@ The pipeline writes out the file `GSEA_results.txt` that contains following colu
 - `Hub_SNP`           Name of the hub variant.
 - `pathway`           The pathway/gene set that was tested.
 - `pval`              P-value from GSEA.
-- `padj`              P-value adjusted for multiple testing by Benjamini-Hochberg FDR. NB! Currently it is adjusted per each library file. If you include multiple GMT files into the analysis you might need to recalculate it.
+- `padj`              P-value adjusted for multiple testing by Benjamini-Hochberg FDR over all the gene sets included to the analysis.
 - `log2err`           The expected error for the standard deviation of the P-value logarithm, as per fgwas documentation.
 - `ES`                Enrichment score from GSEA.
 - `NES`               Enrichment score normalised to mean enrichment of random samples of the same size, as per fgwas documentation.
 - `size`              Size of the pathway after removing gene not present in eQTL dataset.
 - `GSEA_type`         How was eGene ordering done (Z or abs(Z)).
-- `nr_tested_genes`   How many genes were present in eQTL dataset. 
+- `nr_tested_genes`   How many genes were present in eQTL dataset.
 - `nr_pos_dir`        How many genes showed increased eQTL effect for eQTL effect allele. 
 - `nr_neg_dir`        How many genes showed decreased eQTL effect for eQTL effect allele. 
 - `nr_pos_dir_sig_Z`  How many genes showed increased eQTL effect for eQTL effect allele AND absolute Z>5.451. 

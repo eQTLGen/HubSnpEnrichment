@@ -107,20 +107,18 @@ process READSETS {
 process GSEA {
 
     input:
-        tuple path(gmt), path(gene_list)
+        path 'tmp/*'
 
     output:
         path "*_results.txt"
 
     script:
         """
-        mkdir tmp
-        mv *.rds tmp/.
         mv tmp/PrepLibs.rds .
 
         RunGsea.R \
         --genelist tmp \
-        --gmt ${gmt} \
+        --gmt PrepLibs.rds \
         """
 }
 
