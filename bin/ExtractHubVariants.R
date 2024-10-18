@@ -14,15 +14,15 @@ parser$add_argument('--hub_snps', type = 'character',
 args <- parser$parse_args()
 
 hub_snps <- fread(args$hub_snps)
-hub_snps <- hub_snps$SNP
+hub_snps <- hub_snps$variant_index
 
 ds <- arrow::open_dataset(args$eqtl_folder, partitioning = "phenotype", hive_style = TRUE)
 
-hubs <- ds %>% filter(variant %in% !!hub_snps) %>% collect() %>% as.data.table()
+hubs <- ds %>% filter(variant_index %in% !!hub_snps) %>% collect() %>% as.data.table()
 
 hubs$Z <- hubs$beta / hubs$standard_error
-hubs <- hubs[, colnames(hubs) %in% c("variant", "phenotype", "Z"), with = FALSE]
+hubs <- hubs[, colnames(hubs) %in% c("variant_index", "phenotype", "Z"), with = FALSE]
 
 hubs <- hubs[order(hubs$Z, decreasing = TRUE)]
 
-fwrite(hubs, paste0(unique(hubs$variant)[1], "hub_extraction.txt"), sep = "\t")
+fwrite(hubs, paste0(unique(hubs$variant_index)[1], "hub_extraction.txt"), sep = "\t")

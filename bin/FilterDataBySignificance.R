@@ -25,7 +25,7 @@ PtoZ <- function(Pvals, betas = NULL) {
 parser <- ArgumentParser(description = 'Extract hub variants.')
 parser$add_argument('--eqtl_folder', type = 'character',
                     help = 'Folder with eQTL results in parquet format.')
-parser$add_argument('--i2', type = 'numeric', default = 40,
+parser$add_argument('--i2', type = 'numeric', default = 100,
                     help = 'I2 threshold.')
 parser$add_argument('--P', type = 'numeric', default = 5e-8,
                     help = 'Significance P-value threshold.')
@@ -36,7 +36,7 @@ Zthresh <- PtoZ(args$P)
 I2thresh <- args$i2
 
 ds <- open_dataset(args$eqtl_folder, partitioning = "phenotype", hive_style = TRUE) 
-ds <- ds %>% filter(abs(beta/standard_error) >= !!Zthresh & (i_squared < !!I2thresh | is.na(i_squared)))
+ds <- ds %>% filter(abs(beta/standard_error) >= !!Zthresh & (i_squared <= !!I2thresh | is.na(i_squared)))
 
 ds <- ds %>% collect()
 

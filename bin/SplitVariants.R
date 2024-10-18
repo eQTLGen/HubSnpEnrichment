@@ -13,8 +13,8 @@ args <- parser$parse_args()
 
 hub <- fread(args$hub_variants)
 
-for (hub_snp in unique(hub$variant)){
-temp <- hub[variant %in% hub_snp]
+for (hub_snp in unique(hub$variant_index)){
+temp <- hub[variant_index %in% hub_snp]
 temp <- temp[order(Z, decreasing = TRUE)]
 
 temp_outp <- temp$Z

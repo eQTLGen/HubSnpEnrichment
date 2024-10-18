@@ -103,26 +103,26 @@ ZtoP <- function(Z, largeZ = FALSE, log10P = TRUE) {
 
 # Read in significant effects
 message("Read in significant eQTL effects")
-eqtls <- fread(args$sig_eqtls, key = "variant")
+eqtls <- fread(args$sig_eqtls, key = "variant_index")
 eqtls$P <- ZtoP(eqtls$beta/eqtls$standard_error)
 message("Sig. eQTL effects read in!")
 # Read in SNP information
 message("Read in SNP information")
-alleles <- read_parquet(args$allele_info, col_select = c("ID", "CHR", "bp"))
+alleles <- read_parquet(args$allele_info, col_select = c("variant_index", "chromosome", "bp"))
 message("SNP information read in!")
-alleles <- setDT(alleles, key = "ID")
+alleles <- setDT(alleles, key = "variant_index")
 message("SNP information converted to data.table!")
 # setkey(alleles, "ID")
 # message("Keys set!")
-alleles <- alleles[ID %in% eqtls$variant]
+alleles <- alleles[variant_index %in% eqtls$variant_index]
 message("SNP information prefiltered!")
 # Merge
-eqtls <- merge(eqtls, alleles, by.x = "variant", by.y = "ID")
+eqtls <- merge(eqtls, alleles, by = "variant_index")
 message("Merged!")
 # Find hub variants
 message("Find hub variants!")
 hub <- prune_hub_variants(eqtls, 
-snp_name_col = "variant", 
+snp_name_col = "variant_index", 
 snp_chr_col = "CHR", 
 snp_pos_col = "bp", 
 gene_col = "phenotype", 
