@@ -119,11 +119,18 @@ message("SNP information prefiltered!")
 # Merge
 eqtls <- merge(eqtls, alleles, by = "variant_index")
 message("Merged!")
+
+message("Removing variants mapping to MHC region...")
+message(paste(nrow(eqtls[eqtls$chromosome == 6 & eqtls$bp > 25000000 & eqtls$bp < 34000000, ]), "such variants removed."))
+eqtls <- eqtls[!(eqtls$chromosome == 6 & eqtls$bp > 25000000 & eqtls$bp < 34000000), ]
+message("Removing variants mapping to MHC region...done!")
+
+
 # Find hub variants
 message("Find hub variants!")
 hub <- prune_hub_variants(eqtls, 
 snp_name_col = "variant_index", 
-snp_chr_col = "CHR", 
+snp_chr_col = "chromosome", 
 snp_pos_col = "bp", 
 gene_col = "phenotype", 
 p_col = "P",

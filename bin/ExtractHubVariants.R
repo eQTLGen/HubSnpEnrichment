@@ -14,7 +14,7 @@ parser$add_argument('--hub_snps', type = 'character',
 args <- parser$parse_args()
 
 hub_snps <- fread(args$hub_snps)
-hub_snps <- hub_snps$variant_index
+hub_snps <- hub_snps$SNP
 
 ds <- arrow::open_dataset(args$eqtl_folder, partitioning = "phenotype", hive_style = TRUE)
 
